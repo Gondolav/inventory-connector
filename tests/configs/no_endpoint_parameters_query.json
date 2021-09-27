@@ -1,0 +1,24 @@
+{
+  "id": 12345,
+  "type": "API",
+  "url": "an url",
+  "token": "abcdf",
+  "language": "fr",
+  "fields": {
+    "id": "eid",
+    "type": "category",
+    "manufacturer": "manufacturer",
+    "model": "model",
+    "condition": {
+      "name": "status",
+      "allowedValues": ["available", "disponible"]
+    }
+  },
+  "endpoint": {
+    "path": "items/{id}/{param}",
+    "method": "GET",
+    "parameters": {
+      "path": [["id", "abc"], ["param", "value"]]
+    }
+  }
+}

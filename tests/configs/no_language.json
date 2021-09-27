@@ -1,0 +1,17 @@
+{
+  "id": 12345,
+  "type": "DB",
+  "url": "an url",
+  "token": "abcdf",
+  "fields": {
+    "id": "eid",
+    "type": "category",
+    "manufacturer": "manufacturer",
+    "model": "model",
+    "condition": {
+      "name": "status",
+      "allowedValues": ["available", "disponible"]
+    }
+  },
+  "table": "items"
+}

@@ -1,0 +1,14 @@
+{
+  "id": 12345,
+  "type": "DB",
+  "url": "an url",
+  "token": "abcdf",
+  "language": "fr",
+  "fields": {
+    "id": "eid",
+    "type": "category",
+    "manufacturer": "manufacturer",
+    "model": "model"
+  },
+  "table": "items"
+}
