@@ -14,6 +14,7 @@ class Matcher:
         self.model = SentenceTransformer("distiluse-base-multilingual-cased-v1")
 
     def find_matches(self, query: Item, candidates: List[Item]) -> List[Item]:
+        print("Finding matches...")
         query_emb = self._compute_embedding(self._lemmatize(query.to_sentence()))
         candidates_embs = self._compute_embedding(
             list(map(lambda c: self._lemmatize(c.to_sentence()), candidates))

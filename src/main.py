@@ -38,6 +38,12 @@ async def handle_request(request: Request, config: Config, matcher: Matcher):
         return
 
     matches = matcher.find_matches(requested_item, items)
+
+    if not matches:
+        print("No matches found!")
+        await request.reply(Response(False, []))
+        return
+
     await request.reply(Response(True, matches))
 
 

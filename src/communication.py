@@ -1,5 +1,5 @@
 from src.models import Item
-from typing import Any, Callable, Coroutine, Dict, List, Union
+from typing import Any, Callable, Coroutine, Dict, List
 import websockets
 import json
 
