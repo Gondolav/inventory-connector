@@ -48,16 +48,16 @@ class DbQuerier(Querier):
     def _build_item(self, row: Dict[str, str]) -> Item:
         fields = self._config.fields
         return Item(
-            row[fields.id],
             row[fields.type],
             row[fields.manufacturer],
             row[fields.model],
+            id=row[fields.id],
         )
 
     async def query(self) -> List[Item]:
         print("Querying the database...")
         fields = self._config.fields
-        fields_string = ",".join(
+        fields_string = ", ".join(
             [fields.id, fields.type, fields.manufacturer, fields.model]
         )
         condition = self._config.fields.condition
@@ -68,8 +68,8 @@ class DbQuerier(Querier):
             map(
                 self._build_item,
                 await self._database.fetch_all(
-                    query=f"SELECT {fields_string} WHERE {condition_string}",
-                    values={f":{value}": value for value in condition.allowed_values},
+                    query=f"SELECT {fields_string} FROM {self._config.table} WHERE {condition_string}",
+                    values={value: value for value in condition.allowed_values},
                 ),
             )
         )

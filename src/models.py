@@ -6,17 +6,17 @@ from enum import Enum
 class Item:
     def __init__(
         self,
-        id: str,
         type: str,
         manufacturer: str,
         model: str,
         condition: Union[str, None] = None,
+        id: Union[str, None] = None,
     ):
-        self.id = id
         self.type = type
         self.manufacturer = manufacturer
         self.model = model
         self.condition = condition
+        self.id = id
 
     @staticmethod
     def deserialize(obj: Dict[str, str]):
@@ -43,6 +43,9 @@ class Item:
             d["id"] = self.id
 
         return d
+
+    def __repr__(self) -> str:
+        return f"Item(type={self.type}, manufacturer={self.manufacturer}, model={self.model})"
 
 
 class Language(Enum):

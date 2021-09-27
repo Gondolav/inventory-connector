@@ -27,13 +27,16 @@ class Request:
     A request sent by the server.
     """
 
-    def __init__(self, connection, translator: Translator, obj: Dict[str, str]):
+    def __init__(self, connection, translator: Translator, item: Item):
         self._connection = connection
         self._translator = translator
-        self.item = Item.deserialize(obj)
+        self.item = item
 
     async def reply(self, response: Response):
         await self._connection.send(json.dumps(response.serialize()))
+
+    def __repr__(self) -> str:
+        return str(self.item)
 
 
 class Client:
@@ -53,10 +56,10 @@ class Client:
                 async for message in self._connection:
                     # For every new message, decode it and translate it to the client-specific schema
                     json_obj = json.loads(message.decode())
-                    client_specific_json_obj = self._translator.from_standard(json_obj)
-                    request = Request(
-                        self._connection, self._translator, client_specific_json_obj
+                    item = Item(
+                        json_obj["type"], json_obj["manufacturer"], json_obj["model"]
                     )
+                    request = Request(self._connection, self._translator, item)
                     await self.on_message_handler(request)
             except websockets.ConnectionClosed:
                 continue

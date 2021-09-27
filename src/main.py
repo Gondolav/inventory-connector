@@ -28,7 +28,7 @@ async def handle_request(
     request: Request,
     matcher: Matcher,
 ):
-    print("Handling new request...")
+    print(f"Handling new request {request}...")
 
     requested_item = request.item
     items: List[Item] = await query_handler()

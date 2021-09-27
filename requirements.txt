@@ -1,3 +1,4 @@
+aiosqlite==0.17.0
 asyncpg==0.22.0
 databases==0.5.2
 scipy==1.7.0
