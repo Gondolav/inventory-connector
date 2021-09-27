@@ -1,11 +1,9 @@
 import argparse
 import asyncio
-from src.match import Matcher
 from typing import Any, Callable, Coroutine, List
+from src.match import Matcher
 from src.query import ApiQuerier, DbQuerier
 from src.models import ConnectionType, Item
-
-from src.translation import Translator
 from src.communication import Client, Request, Response
 from src.parser import ConfigParser
 
@@ -28,6 +26,9 @@ async def handle_request(
     request: Request,
     matcher: Matcher,
 ):
+    """
+    Handles the request, querying the DB, finding matches and answering back.
+    """
     print(f"Handling new request {request}...")
 
     requested_item = request.item
@@ -45,7 +46,9 @@ async def handle_request(
         await request.reply(Response(False, []))
         return
 
-    await request.reply(Response(True, matches))
+    response = Response(True, matches)
+    print(f"Answering the request with response {response}...\n")
+    await request.reply(response)
 
 
 async def main():
@@ -60,8 +63,7 @@ async def main():
         config = parser.parse()
 
         print("Initializing the client...")
-        translator = Translator(config.fields)
-        client = Client(server_uri, translator)
+        client = Client(server_uri)
         matcher = Matcher(config.language)
 
         querier = (

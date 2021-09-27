@@ -4,6 +4,10 @@ from enum import Enum
 
 
 class Item:
+    """
+    An inventory item.
+    """
+
     def __init__(
         self,
         type: str,

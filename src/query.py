@@ -5,6 +5,10 @@ from abc import ABC, abstractmethod
 
 
 class Querier(ABC):
+    """
+    Abstract class modeling a generic service querier.
+    """
+
     def __init__(self, config: Config):
         super().__init__()
         self.config = config
@@ -32,6 +36,10 @@ class Querier(ABC):
 
 
 class DbQuerier(Querier):
+    """
+    DB querier. It supports SQLite, PostgreSQL and MySQL.
+    """
+
     def __init__(self, config: Config):
         super().__init__(config)
         self._config = cast(DbConfig, config)
@@ -76,6 +84,10 @@ class DbQuerier(Querier):
 
 
 class ApiQuerier(Querier):
+    """
+    API querier.
+    """
+
     def __init__(self, config: Config):
         super().__init__(config)
         self.config = cast(ApiConfig, config)
