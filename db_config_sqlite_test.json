@@ -1,0 +1,18 @@
+{
+  "id": 12345,
+  "type": "DB",
+  "url": "sqlite:///test.db",
+  "token": "abcdf",
+  "language": "en",
+  "fields": {
+    "id": "id",
+    "type": "category",
+    "manufacturer": "brand",
+    "model": "model",
+    "condition": {
+      "name": "status",
+      "allowedValues": ["available"]
+    }
+  },
+  "table": "items"
+}
