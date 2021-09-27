@@ -1,9 +1,9 @@
 import argparse
 import asyncio
 from src.match import Matcher
-from typing import List, cast
-from src.query import query_api, query_db
-from src.models import ApiConfig, Config, ConnectionType, DbConfig, Item
+from typing import Any, Callable, Coroutine, List
+from src.query import ApiQuerier, DbQuerier
+from src.models import ConnectionType, Item
 
 from src.translation import Translator
 from src.communication import Client, Request, Response
@@ -23,14 +23,15 @@ def parse_args():
     return args.server_uri, args.config
 
 
-async def handle_request(request: Request, config: Config, matcher: Matcher):
+async def handle_request(
+    query_handler: Callable[[], Coroutine[Any, Any, List[Item]]],
+    request: Request,
+    matcher: Matcher,
+):
     print("Handling new request...")
+
     requested_item = request.item
-    items: List[Item] = []
-    if config.type == ConnectionType.DB:
-        items = await query_db(requested_item, cast(DbConfig, config))
-    else:
-        items = await query_api(requested_item, cast(ApiConfig, config))
+    items: List[Item] = await query_handler()
 
     if not items:
         print("No items found!")
@@ -49,6 +50,7 @@ async def handle_request(request: Request, config: Config, matcher: Matcher):
 
 async def main():
     client = None
+    querier = None
     try:
         print("Welcome to the inventory connector!")
         server_uri, config_filename = parse_args()
@@ -61,7 +63,14 @@ async def main():
         translator = Translator(config.fields)
         client = Client(server_uri, translator)
         matcher = Matcher(config.language)
-        client.on_message(lambda r: handle_request(r, config, matcher))
+
+        querier = (
+            DbQuerier(config)
+            if config.type == ConnectionType.DB
+            else ApiQuerier(config)
+        )
+        await querier.connect()
+        client.on_message(lambda r: handle_request(querier.query, r, matcher))
 
         print("Connecting to the server...")
         await client.connect()
@@ -69,6 +78,9 @@ async def main():
         print("Exiting...")
         if client:
             await client.close()
+
+        if querier:
+            await querier.disconnect()
 
 
 if __name__ == "__main__":

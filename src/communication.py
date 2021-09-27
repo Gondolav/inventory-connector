@@ -33,11 +33,7 @@ class Request:
         self.item = Item.deserialize(obj)
 
     async def reply(self, response: Response):
-        response_dict = response.serialize()
-        response_dict["items"] = list(
-            map(self._translator.to_standard, response_dict["items"])
-        )
-        await self._connection.send(json.dumps(response_dict))
+        await self._connection.send(json.dumps(response.serialize()))
 
 
 class Client:
@@ -51,6 +47,7 @@ class Client:
 
     async def connect(self):
         async for websocket in websockets.connect(self._uri):
+            # Try-except-continue used for automatic reconnection with exponential backoff
             try:
                 self._connection = websocket
                 async for message in self._connection:

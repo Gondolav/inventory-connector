@@ -6,6 +6,10 @@ from src.models import Item, Language
 
 
 class Matcher:
+    """
+    A matcher that finds the best items for answering a particular equipment query.
+    """
+
     def __init__(self, language: Language):
         self.nlp = spacy.load(
             "en_core_web_sm" if language == Language.EN else "fr_core_news_sm",
@@ -14,6 +18,10 @@ class Matcher:
         self.model = SentenceTransformer("distiluse-base-multilingual-cased-v1")
 
     def find_matches(self, query: Item, candidates: List[Item]) -> List[Item]:
+        """
+        Finds the best matches for the given query, returning the objects sorted in order of
+        similarity (descending order).
+        """
         print("Finding matches...")
         query_emb = self._compute_embedding(self._lemmatize(query.to_sentence()))
         candidates_embs = self._compute_embedding(

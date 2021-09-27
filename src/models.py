@@ -1,3 +1,4 @@
+from abc import ABC
 from typing import Dict, List, Union
 from enum import Enum
 
@@ -5,11 +6,13 @@ from enum import Enum
 class Item:
     def __init__(
         self,
+        id: str,
         type: str,
         manufacturer: str,
         model: str,
         condition: Union[str, None] = None,
     ):
+        self.id = id
         self.type = type
         self.manufacturer = manufacturer
         self.model = model
@@ -17,15 +20,27 @@ class Item:
 
     @staticmethod
     def deserialize(obj: Dict[str, str]):
+        """
+        Builds an item given its dictionary representation.
+        """
         return Item(obj["type"], obj["manufacturer"], obj["model"], obj["condition"])
 
     def to_sentence(self) -> str:
+        """
+        Converts the item into a sentence.
+        """
         return f"{self.type} {self.manufacturer} {self.model}"
 
     def serialize(self) -> Dict[str, str]:
+        """
+        Serializes the item into a dictionary.
+        """
         d = {"type": self.type, "manufacturer": self.manufacturer, "model": self.model}
         if self.condition:
             d["condition"] = self.condition
+
+        if self.id:
+            d["id"] = self.id
 
         return d
 
@@ -121,7 +136,7 @@ class Fields:
         return False
 
 
-class Config:
+class Config(ABC):
     """
     A configuration.
     """

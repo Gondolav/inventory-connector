@@ -1,15 +1,91 @@
-from typing import List
-from src.communication import Request
-from src.models import ApiConfig, DbConfig, Item
+from typing import Dict, List, cast
+from src.models import ApiConfig, Config, DbConfig, Item
+from databases import Database
+from abc import ABC, abstractmethod
 
 
-async def query_db(item: Item, config: DbConfig) -> List[Item]:
-    print("Querying the database...")
-    table = config.table
+class Querier(ABC):
+    def __init__(self, config: Config):
+        super().__init__()
+        self.config = config
 
-    pass
+    @abstractmethod
+    async def connect(self):
+        """
+        Connects to the service.
+        """
+        pass
+
+    @abstractmethod
+    async def disconnect(self):
+        """
+        Disconnects from the service.
+        """
+        pass
+
+    @abstractmethod
+    async def query(self) -> List[Item]:
+        """
+        Queries the service, returning a list of items.
+        """
+        pass
 
 
-async def query_api(item: Item, config: ApiConfig) -> List[Item]:
-    print("Querying the API...")
-    pass
+class DbQuerier(Querier):
+    def __init__(self, config: Config):
+        super().__init__(config)
+        self._config = cast(DbConfig, config)
+        self._database = Database(config.url)
+
+    async def connect(self):
+        print("Connecting to the DB...")
+        await self._database.connect()
+
+    async def disconnect(self):
+        print("Disconnecting from the DB...")
+        await self._database.disconnect()
+
+    def _build_item(self, row: Dict[str, str]) -> Item:
+        fields = self._config.fields
+        return Item(
+            row[fields.id],
+            row[fields.type],
+            row[fields.manufacturer],
+            row[fields.model],
+        )
+
+    async def query(self) -> List[Item]:
+        print("Querying the database...")
+        fields = self._config.fields
+        fields_string = ",".join(
+            [fields.id, fields.type, fields.manufacturer, fields.model]
+        )
+        condition = self._config.fields.condition
+        condition_string = " OR ".join(
+            [f"{condition.name} = :{value}" for value in condition.allowed_values]
+        )
+        return list(
+            map(
+                self._build_item,
+                await self._database.fetch_all(
+                    query=f"SELECT {fields_string} WHERE {condition_string}",
+                    values={f":{value}": value for value in condition.allowed_values},
+                ),
+            )
+        )
+
+
+class ApiQuerier(Querier):
+    def __init__(self, config: Config):
+        super().__init__(config)
+        self.config = cast(ApiConfig, config)
+
+    async def connect(self):
+        pass
+
+    async def disconnect(self):
+        pass
+
+    async def query(self) -> List[Item]:
+        print("Querying the API...")
+        pass
