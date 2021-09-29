@@ -1,0 +1,18 @@
+{
+  "id": 2,
+  "type": "DB",
+  "url": "postgres://pyzzqisa:oKs_QlOjCTO36mUZUJ-aA0PU_gbMRLHj@surus.db.elephantsql.com/pyzzqisa?min_size=1&max_size=5&ssl=true",
+  "token": "abcdf",
+  "language": "fr",
+  "fields": {
+    "id": "pkid",
+    "type": "category",
+    "manufacturer": "manufacturer",
+    "model": "model",
+    "condition": {
+      "name": "condition",
+      "allowedValues": ["disponible"]
+    }
+  },
+  "table": "equipment"
+}

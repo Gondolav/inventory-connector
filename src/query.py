@@ -1,7 +1,9 @@
-from typing import Dict, List, cast
-from src.models import ApiConfig, Config, DbConfig, Item
+from typing import Any, Dict, List, cast
+from src.models import ApiConfig, Config, DbConfig, HttpMethod, Item
 from databases import Database
 from abc import ABC, abstractmethod
+import aiohttp
+import re
 
 
 class Querier(ABC):
@@ -11,7 +13,7 @@ class Querier(ABC):
 
     def __init__(self, config: Config):
         super().__init__()
-        self.config = config
+        self._config = config
 
     @abstractmethod
     async def connect(self):
@@ -70,14 +72,20 @@ class DbQuerier(Querier):
         )
         condition = self._config.fields.condition
         condition_string = " OR ".join(
-            [f"{condition.name} = :{value}" for value in condition.allowed_values]
+            [
+                f"{condition.name} = :{value.replace(' ', '_')}"
+                for value in condition.allowed_values
+            ]
         )
         return list(
             map(
                 self._build_item,
                 await self._database.fetch_all(
                     query=f"SELECT {fields_string} FROM {self._config.table} WHERE {condition_string}",
-                    values={value: value for value in condition.allowed_values},
+                    values={
+                        value.replace(" ", "_"): value
+                        for value in condition.allowed_values
+                    },
                 ),
             )
         )
@@ -90,14 +98,46 @@ class ApiQuerier(Querier):
 
     def __init__(self, config: Config):
         super().__init__(config)
-        self.config = cast(ApiConfig, config)
+        self._config = cast(ApiConfig, config)
+        self._session = aiohttp.ClientSession()
 
     async def connect(self):
+        print("Connecting to the API...")
         pass
 
     async def disconnect(self):
-        pass
+        print("Disconnecting from the API...")
+        await self._session.close()
+
+    def _build_item(self, json: Dict[str, str]) -> Item:
+        fields = self._config.fields
+        return Item(
+            json[fields.type],
+            json[fields.manufacturer],
+            json[fields.model],
+            id=json[fields.id],
+        )
 
     async def query(self) -> List[Item]:
         print("Querying the API...")
-        pass
+        url = self._config.url
+        endpoint = self._config.endpoint
+        if endpoint.method == HttpMethod.GET:
+            path = endpoint.path
+            if endpoint.has_path_params:
+                path = re.sub(
+                    r"/([^/]+)",
+                    lambda x: f"/{str(endpoint.path_params[x.group().replace('/', '').replace('{', '').replace('}', '')])}",
+                    path,
+                )
+
+            # Add to query params one parameter for filtering on the condition of the object
+            condition = self._config.fields.condition
+            query_params: Dict[str, Any] = endpoint.query_params
+            query_params[condition.name] = condition.allowed_values
+
+            async with self._session.get(f"{url}/{path}", params=query_params) as resp:
+                json = await resp.json()
+                return list(map(self._build_item, json))
+        else:
+            return []

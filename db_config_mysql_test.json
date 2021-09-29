@@ -1,0 +1,18 @@
+{
+  "id": 2,
+  "type": "DB",
+  "url": "mysql://sql11440999:xyWbXgFIXC@sql11.freemysqlhosting.net/sql11440999",
+  "token": "abcdf",
+  "language": "fr",
+  "fields": {
+    "id": "id",
+    "type": "type",
+    "manufacturer": "brand",
+    "model": "model",
+    "condition": {
+      "name": "status",
+      "allowedValues": ["disponible", "à disposition"]
+    }
+  },
+  "table": "equipment"
+}

@@ -1,7 +1,7 @@
 import websockets
 import json
 
-from typing import Any, Callable, Coroutine, List
+from typing import Any, Callable, Coroutine, List, Optional
 from src.models import Item
 
 
@@ -10,18 +10,22 @@ class Response:
     A response to a query to send back to the server.
     """
 
-    def __init__(self, found: bool, items: List[Item]):
+    def __init__(self, found: bool, items: List[Item], price: Optional[float] = None):
         self.found = found
         self.items = items
+        self.price = price
 
     def serialize(self) -> dict:
         """
         Serializes the response to a dictionary.
         """
-        return {
+        d = {
             "found": self.found,
             "items": list(map(lambda item: item.serialize(), self.items)),
         }
+        if self.price:
+            d["price"] = self.price
+        return d
 
     def __repr__(self) -> str:
         return str(self.serialize())
@@ -40,7 +44,9 @@ class Request:
         """
         Answers the request with the given response.
         """
-        await self._connection.send(json.dumps(response.serialize()))
+        await self._connection.send(
+            json.dumps(response.serialize(), ensure_ascii=False).encode()
+        )
 
     def __repr__(self) -> str:
         return str(self.item)

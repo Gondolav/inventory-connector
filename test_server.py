@@ -4,12 +4,13 @@ import websockets
 
 
 async def hello(websocket, path):
-    query = {"type": "Bed", "manufacturer": "Bosch", "model": "Med231"}
+    query = {"type": "Lit médicalisé", "manufacturer": "Bosch", "model": "Med231"}
     await websocket.send(json.dumps(query).encode())
     print(f">>> {query}")
 
     res = await websocket.recv()
-    print(f"<<< {res}")
+    print(f"<<< {res.decode()}")
+    return
 
 
 async def main():
