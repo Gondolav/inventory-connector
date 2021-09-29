@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Dict, List, Union
+from typing import Dict, List, Optional
 from enum import Enum
 
 
@@ -13,8 +13,8 @@ class Item:
         type: str,
         manufacturer: str,
         model: str,
-        condition: Union[str, None] = None,
-        id: Union[str, None] = None,
+        condition: Optional[str] = None,
+        id: Optional[str] = None,
     ):
         self.type = type
         self.manufacturer = manufacturer
