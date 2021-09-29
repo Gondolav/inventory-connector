@@ -89,11 +89,13 @@ class Endpoint:
 
     def __init__(
         self,
+        auth: str,
         path: str,
         method: HttpMethod,
         query_params: Dict[str, str],
         path_params: Dict[str, str],
     ):
+        self.auth = auth
         self.path = path
         self.method = method
         self.query_params = query_params

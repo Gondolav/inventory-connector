@@ -136,7 +136,12 @@ class ApiQuerier(Querier):
             query_params: Dict[str, Any] = endpoint.query_params
             query_params[condition.name] = condition.allowed_values
 
-            async with self._session.get(f"{url}/{path}", params=query_params) as resp:
+            auth_token = endpoint.auth
+            headers = {"Authentication": f"Bearer {auth_token}"}
+
+            async with self._session.get(
+                f"{url}/{path}", params=query_params, headers=headers
+            ) as resp:
                 json = await resp.json()
                 return list(map(self._build_item, json))
         else:

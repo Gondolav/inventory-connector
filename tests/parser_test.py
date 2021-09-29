@@ -51,6 +51,7 @@ def test_parser_parses_api_config():
         Condition("status", ["available", "disponible"]),
     ), "Wrong fields"
     assert config.endpoint == Endpoint(
+        "the auth token",
         "items/{id}/{param}",
         HttpMethod.GET,
         {"model": "gt", "type": "bed"},
@@ -132,6 +133,9 @@ def test_parser_fields_condition_allowed_values_not_found():
     with pytest.raises(ParserException):
         ConfigParser(f"{CONFIGS_PATH}/no_fields_condition_allowed_values.json")
 
+def test_parser_endpoint_auth_not_found():
+    with pytest.raises(ParserException):
+        ConfigParser(f"{CONFIGS_PATH}/no_endpoint_auth.json")
 
 def test_parser_endpoint_path_not_found():
     with pytest.raises(ParserException):

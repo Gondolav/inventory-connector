@@ -3,7 +3,7 @@
   "type": "API",
   "url": "an url",
   "token": "abcdf",
-  "language": "fr",
+  "language": "en",
   "fields": {
     "id": "eid",
     "type": "category",
@@ -15,12 +15,11 @@
     }
   },
   "endpoint": {
-    "auth": "the auth token",
     "path": "items/{id}/{param}",
     "method": "GET",
     "parameters": {
       "query": [["model", "gt"], ["type", "bed"]],
-      "path": [["id", "abc"], ["param", "value"], ["param2", "value2"]]
+      "path": [["id", "abc"], ["param", "value"]]
     }
   }
 }

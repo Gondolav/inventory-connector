@@ -15,6 +15,7 @@
     }
   },
   "endpoint": {
+    "auth": "the auth token",
     "method": "GET",
     "parameters": {
       "query": [["model", "gt"], ["type", "bed"]],

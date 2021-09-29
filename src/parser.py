@@ -101,8 +101,11 @@ class ConfigParser:
                     if not endpoint:
                         return False, "Empty 'endpoint' field"
 
-                    required_endpoint_keys = ["path", "method", "parameters"]
+                    required_endpoint_keys = ["auth", "path", "method", "parameters"]
                     if all(k in endpoint for k in required_endpoint_keys):
+                        if not endpoint["auth"]:
+                            return False, "Empty 'auth' field"
+
                         endpoint_path = endpoint["path"]
                         if not endpoint_path:
                             return False, "Empty 'path' field"
@@ -189,6 +192,7 @@ class ConfigParser:
             endpoint_dict = self.config["endpoint"]
             params_dict = endpoint_dict["parameters"]
             endpoint = Endpoint(
+                endpoint_dict["auth"],
                 endpoint_dict["path"],
                 HttpMethod[endpoint_dict["method"]],
                 dict(params_dict["query"]),
