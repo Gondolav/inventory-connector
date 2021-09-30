@@ -39,7 +39,7 @@ The connector, upon request from the server, will:
 
 1. Convert the request to a format understandable by the client (specified in the configuration file, see below)
 2. Get all the items available (from either DB or API, depending on what has been specified in the config)
-3. Compute the word embeddings (with [SentenceBERT](https://github.com/UKPLab/sentence-transformers)) for each item and for the query, compute the cosine similarity between each, and filter out all those that have a similarity below 0.6.
+3. Compute the word embeddings (with [SentenceBERT](https://github.com/UKPLab/sentence-transformers)) for each item and for the query, compute the cosine similarity between each, and filter out all those that have a similarity below 0.6
 4. Send the answer back, converting it to the format understandable by the server
 
 ## Configuration files
