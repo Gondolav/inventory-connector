@@ -14,7 +14,7 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description="Inventory connector.")
     parser.add_argument(
-        "server_uri", type=str, help="the uri of the server to connect to"
+        "server_uri", type=str, help="the uri of the WebSockets server to connect to"
     )
     parser.add_argument("config", type=str, help="the name of the configuration file")
     args = parser.parse_args()
@@ -55,8 +55,8 @@ async def main():
     client = None
     querier = None
     try:
-        print("Welcome to the inventory connector!")
         server_uri, config_filename = parse_args()
+        print("Welcome to the inventory connector!")
 
         print(f"Validating and parsing the configuration file '{config_filename}'...")
         parser = ConfigParser(config_filename)

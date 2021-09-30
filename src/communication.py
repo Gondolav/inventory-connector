@@ -60,7 +60,10 @@ class Client:
         """
         Connects to the server.
         """
-        async for websocket in websockets.connect(self._uri):
+        ssl = True if self._uri.startswith("wss") else False
+        async for websocket in websockets.connect(
+            self._uri, ssl=ssl
+        ) if ssl else websockets.connect(self._uri):
             # Try-except-continue used for automatic reconnection with exponential backoff
             try:
                 self._connection = websocket
